@@ -173,7 +173,7 @@ bool AppInit2(int argc, char* argv[])
             "  -paytxfee=<amt>  \t  "   + _("Fee per kB to add to transactions you send\n") +
             "  -daemon          \t\t  " + _("Run in the background as a daemon and accept commands\n") +
             "  -debug           \t\t  " + _("Output extra debugging information\n") +
-	    "  -caneat          \t\t  " + _("Permit the use of 'eatblock'\n") +
+	        "  -caneat          \t\t  " + _("Permit the use of 'eatblock'\n") +
             "  -logtimestamps   \t  "   + _("Prepend debug output with timestamp\n") +
             "  -printtoconsole  \t  "   + _("Send trace/debug info to console instead of debug.log file\n") +
             "  -rpcuser=<user>  \t  "   + _("Username for JSON-RPC connections\n") +
@@ -283,8 +283,10 @@ bool AppInit2(int argc, char* argv[])
     InitMessage(_("Loading block index..."));
     printf("Loading block index...\n");
     nStart = GetTimeMillis();
-    if (!LoadBlockIndex())
+    if (!LoadBlockIndex()) {
         strErrors += _("Error loading blkindex.dat      \n");
+        printf("LoadBlockINdex returned false");
+    }
     printf(" block index %15"PRI64d"ms\n", GetTimeMillis() - nStart);
 
     InitMessage(_("Loading wallet..."));

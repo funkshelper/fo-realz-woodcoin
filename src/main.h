@@ -952,8 +952,10 @@ public:
         filein >> *this;
 
         // Check the header
-        if (!CheckProofOfWork(GetHash(), nBits))
+        if (!CheckProofOfWork(GetPoWHash(), nBits)) { 
+            printf("Error checking proofOfWork reading from disk ");
             return error("CBlock::ReadFromDisk() : errors in block header");
+        }
 
         return true;
     }
@@ -1095,7 +1097,9 @@ public:
 
     bool CheckIndex() const
     {
-        return CheckProofOfWork(GetBlockHash(), nBits);
+         /** Scrypt is used for block proof-of-work, but for purposes of performance the index internally uses sha256.
+         *  This check was considered unneccessary given the other safeguards like the genesis and checkpoints. */
+        return true;  //CheckProofOfWork(GetPoWHash(), nBits);
     }
 
     bool EraseBlockFromDisk()

@@ -495,8 +495,10 @@ bool CTxDB::LoadBlockIndex()
 {
     // Get database cursor
     Dbc* pcursor = GetCursor();
-    if (!pcursor)
+    if (!pcursor) {
+        printf("Can't even get cursor in LoadBlockIndex()");
         return false;
+    }
 
     // Load mapBlockIndex
     unsigned int fFlags = DB_SET_RANGE;

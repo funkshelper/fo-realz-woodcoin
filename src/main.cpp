@@ -958,13 +958,7 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex)
     // Check it again in case a previous version let a bad block in
     if (!CheckBlock())
         return false;
-    
-    // Special case for the genesis block, skipping connection of its transactions
-    // (its coinbase is unspendable)
-    if (GetHash() == hashGenesisBlock) {
-        pindexGenesisBlock = pindex;
-        return true;
-    }
+
     // Do not allow blocks that contain transactions which 'overwrite' older transactions,
     // unless those are already completely spent.
     // If such overwrites are allowed, coinbases and transactions depending upon those
@@ -1239,9 +1233,10 @@ bool CBlock::CheckBlock() const
         return DoS(100, error("CheckBlock() : size limits failed"));
 
     // Check proof of work matches claimed amount
-    if (!CheckProofOfWork(GetPoWHash(), nBits))
+    if (!CheckProofOfWork(GetPoWHash(), nBits)) {
         return DoS(50, error("CheckBlock() : proof of work failed"));
-
+        printf("CheckBlock() : proof of work failed");
+    }
     // Check timestamp
     if (GetBlockTime() > GetAdjustedTime() + 2 * 60 * 60)
         return error("CheckBlock() : block timestamp too far in the future");
