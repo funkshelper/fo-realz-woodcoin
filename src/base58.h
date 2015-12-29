@@ -260,7 +260,7 @@ class CBitcoinAddress : public CBase58Data
 public:
     bool SetHash160(const uint160& hash160)
     {
-        SetData(0, &hash160, 20);
+        SetData(73, &hash160, 20);
         return true;
     }
 

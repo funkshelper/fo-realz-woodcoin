@@ -1,6 +1,6 @@
 diff -uNr a/src/base58.h b/src/base58.h
 --- a/src/base58.h false
-+++ b/src/base58.h d6ddd7904c370f01107bc69a006501763657f1f87409bb0239c354fc2aa5bce16c714136b204725a7628ee47939aaf0e5fd1cea9a9724fbbd2eab971ab96b413
++++ b/src/base58.h 6558068edf7f5b63cf0715ee45cc1d32ed4e966a9dee250e1dfe091f3ea3cb85b31047d87de94902e71fbb3803a9c2125c7f7fd4c8dad96741cc7c02f46512a5
 @@ -0,0 +1,366 @@
 +// Copyright (c) 2009-2010 Satoshi Nakamoto
 +// Copyright (c) 2011 The Bitcoin Developers
@@ -264,7 +264,7 @@ diff -uNr a/src/base58.h b/src/base58.h
 +public:
 +    bool SetHash160(const uint160& hash160)
 +    {
-+        SetData(0, &hash160, 20);
++        SetData(73, &hash160, 20);
 +        return true;
 +    }
 +
@@ -8958,8 +8958,8 @@ diff -uNr a/src/keystore.h b/src/keystore.h
 +#endif
 diff -uNr a/src/main.cpp b/src/main.cpp
 --- a/src/main.cpp false
-+++ b/src/main.cpp 1b3fc5980029e9b3fc93b6aebee9f3cbe6081b85b8281a76410318f292fcb8de1bf9a161c185c8bf1e69d2021280daeb9785cdc4d0766fbb6df5144d55295f97
-@@ -0,0 +1,2963 @@
++++ b/src/main.cpp 35e71ce05f7603d25d84a3fc34e819d4aa03af52f54f8d6b936279626e441f03b66cfbeb9acbd2bf79be0949e6cf4234fb5bd1d16d394167ffb4c065394a718c
+@@ -0,0 +1,2928 @@
 +// Copyright (c) 2009-2010 Satoshi Nakamoto
 +// Copyright (c) 2009-2012 The Bitcoin developers
 +// Distributed under the MIT/X11 software license, see the accompanying
@@ -11427,38 +11427,6 @@ diff -uNr a/src/main.cpp b/src/main.cpp
 +        ((uint32_t*)pstate)[i] = ctx.h[i];
 +}
 +
-+//
-+// ScanHash scans nonces looking for a hash with at least some zero bits.
-+// It operates on big endian data.  Caller does the byte reversing.
-+// All input buffers are 16-byte aligned.  nNonce is usually preserved
-+// between calls, but periodically or if nNonce is 0xffff0000 or above,
-+// the block is rebuilt and nNonce starts over at zero.
-+//
-+unsigned int static ScanHash_CryptoPP(char* pmidstate, char* pdata, char* phash1, char* phash, unsigned int& nHashesDone)
-+{
-+    unsigned int& nNonce = *(unsigned int*)(pdata + 12);
-+    for (;;)
-+    {
-+        // Crypto++ SHA-256
-+        // Hash pdata using pmidstate as the starting state into
-+        // preformatted buffer phash1, then hash phash1 into phash
-+        nNonce++;
-+        SHA256Transform(phash1, pdata, pmidstate);
-+        SHA256Transform(phash, phash1, pSHA256InitState);
-+
-+        // Return the nonce if the hash has at least some zero bits,
-+        // caller will check if it has enough to reach the target
-+        if (((unsigned short*)phash)[14] == 0)
-+            return nNonce;
-+
-+        // If nothing found after trying for a while, return -1
-+        if ((nNonce & 0xffff) == 0)
-+        {
-+            nHashesDone = 0xffff+1;
-+            return -1;
-+        }
-+    }
-+}
 +
 +// Some explaining would be appreciated
 +class COrphan
@@ -11788,34 +11756,31 @@ diff -uNr a/src/main.cpp b/src/main.cpp
 +        //
 +        int64 nStart = GetTime();
 +        uint256 hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
-+        uint256 hashbuf[2];
-+        uint256& hash = *alignup<16>(hashbuf);
++        //uint256 hashbuf[2];
++        //uint256& hash = *alignup<16>(hashbuf);
 +        loop
 +        {
 +            unsigned int nHashesDone = 0;
-+            unsigned int nNonceFound;
 +
-+            // Crypto++ SHA-256
-+            nNonceFound = ScanHash_CryptoPP(pmidstate, pdata + 64, phash1,
-+                                            (char*)&hash, nHashesDone);
++            uint256 thash;
 +
-+            // Check if something found
-+            if (nNonceFound != -1)
++            loop
 +            {
-+                for (int i = 0; i < sizeof(hash)/4; i++)
-+                    ((unsigned int*)&hash)[i] = ByteReverse(((unsigned int*)&hash)[i]);
 +
-+                if (hash <= hashTarget)
++		thash = Hash2(BEGIN(pblock->nVersion), END(pblock->nNonce));
++
++                if (thash <= hashTarget)
 +                {
 +                    // Found a solution
-+                    pblock->nNonce = ByteReverse(nNonceFound);
-+                    assert(hash == pblock->GetHash());
-+
 +                    SetThreadPriority(THREAD_PRIORITY_NORMAL);
 +                    CheckWork(pblock.get(), *pwalletMain, reservekey);
 +                    SetThreadPriority(THREAD_PRIORITY_LOWEST);
 +                    break;
 +                }
++                pblock->nNonce += 1;
++                nHashesDone += 1;
++                if ((pblock->nNonce & 0xFF) == 0)
++                    break;
 +            }
 +
 +            // Meter hashes/sec
@@ -23255,6 +23220,31 @@ diff -uNr a/src/test/miner_tests.cpp b/src/test/miner_tests.cpp
 +}
 +
 +BOOST_AUTO_TEST_SUITE_END()
+diff -uNr a/src/test/README b/src/test/README
+--- a/src/test/README false
++++ b/src/test/README 8dc10490739fe1fff46b553121622b8ac1f7b6b90210a56900dde6b85f44fed7287dcc2f773a8d64aded5c1b242f587132d3bc1e37ce21c5fff315af913b8fc1
+@@ -0,0 +1,21 @@
++The sources in this directory are unit test cases.  Boost includes a
++unit testing framework, and since bitcoin already uses boost, it makes
++sense to simply use this framework rather than require developers to
++configure some other framework (we want as few impediments to creating
++unit tests as possible).
++
++The build system is setup to compile an executable called "test_bitcoin"
++that runs all of the unit tests.  The main source file is called
++test_bitcoin.cpp, which simply includes other files that contain the
++actual unit tests (outside of a couple required preprocessor
++directives).  The pattern is to create one test file for each class or
++source file for which you want to create unit tests.  The file naming
++convention is "<source_filename>_tests.cpp" and such files should wrap
++their tests in a test suite called "<source_filename>_tests".  For an
++examples of this pattern, examine uint160_tests.cpp and
++uint256_tests.cpp.
++
++For further reading, I found the following website to be helpful in
++explaining how the boost unit test framework works:
++
++http://www.alittlemadness.com/2009/03/31/c-unit-testing-with-boosttest/
 diff -uNr a/src/test/script_tests.cpp b/src/test/script_tests.cpp
 --- a/src/test/script_tests.cpp false
 +++ b/src/test/script_tests.cpp d85bd1a00f042862691d5946713e18c1121680d0c600734a1f3bec3e52c05cbac3c9f4271dcf23c7f29694ef6c348f8acd439558bc6342aac307493881607349
