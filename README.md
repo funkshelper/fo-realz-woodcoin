@@ -2,16 +2,16 @@
 
 ...A funkenstein_the_dwarf production...
 
-Woodcoin a la "therealbitcoin".   
+Woodcoin a la "therealbitcoin".
 
-This is a retro version of Woodcoin.  Command line only.  
-It syncs far slower than more common wallet versions.  
+This is a retro version of Woodcoin.  Command line only.
+It syncs far slower than more common wallet versions.
 
 This thing also builds statically with buildroot/musl toolchain as described 
-in therealbitcoin and related documentation.  
+in therealbitcoin and related documentation.
 
 This is a hardened war-ready full node and wallet for woodcoin, 
-for post-apocalypse and heavy battlefield use.  
+for post-apocalypse and heavy battlefield use.
 Also can be used as reference implementation due to minimal external libraries. 
 
 Obviously github is not expected to be around nor trusted in such scenarios 
@@ -35,7 +35,7 @@ asciilifeform_tx-orphanage_amputation.vpatch
 asciilifeform_ver_now_5_4_and_irc_is_gone_and_now_must_give_ip.vpatch
 asciilifeform_zap_hardcoded_seeds.vpatch
 asciilifeform_zap_showmyip_crud.vpatch
-bitcoin-asciilifeform.1.vpatch
+bitcoin-asciilifeform.1.vpatch=
 bitcoin-asciilifeform.2-https_snipsnip.vpatch
 bitcoin-asciilifeform.3-turdmeister-alert-snip.vpatch
 bitcoin-asciilifeform.4-goodbye-win32.vpatch
@@ -47,6 +47,27 @@ mod6_fix_dumpblock_params.vpatch
 rm_rf_upnp.vpatch
 funk_add_privkey_wallet_tools.vpatch
 funk_chuck_checkpoints.vpatch
+
+Instructions:  
+
+build with 
+
+     make -f makefile.unix
+
+run the first time with 
+
+     ./woodcoind -connect=<some node>  -myip=<myip> &
+
+depending on your build environment you might need to first issue: 
+
+     export LC_ALL=C
+
+after the client has connected the first time it will keep a list of nodes, in the future one only needs
+
+     ./woodcoind &
+
+
+
 
 
 
