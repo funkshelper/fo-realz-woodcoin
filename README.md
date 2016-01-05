@@ -5,7 +5,7 @@
 Woodcoin a la "therealbitcoin".
 This is a fork of the reference node project found here: (therealbitcoin.org , thebitcoin.foundation).
 
-This is a retro version of Woodcoin.  Command line only.
+This is a retro version of Woodcoin.  Command line only.  
 It syncs far slower than more common wallet versions.
 
 This thing also builds statically with buildroot/musl toolchain as described 
@@ -15,7 +15,7 @@ This is a hardened war-ready full node and wallet for woodcoin,
 for post-apocalypse and heavy battlefield use.
 Also can be used as reference implementation due to minimal external libraries. 
 
-Obviously github is not expected to be entirely reliable in such scenarios 
+Github is not guaranteed to be entirely reliable in such scenarios 
 as those when this version becomes crucial to the network.
   
 Therefore it is suggested to keep a copy of this thing in local rad-hard storage, 
@@ -51,9 +51,9 @@ funk_chuck_checkpoints.vpatch <br/>
 
 Instructions:  
 
-Download the code and verify either using <code>V</code> to press or verifying the tar using the gpg key:
+Download the code and verify either using <code>V</code> to press (late 2015 vintage V.pl is here with mod6' sig) or verifying the tar using the gpg key:
 
-pub   4096R/88298AB6 Funkenstein the Dwarf <funkenstein@woodcoin.org>
+     pub   4096R/88298AB6 Funkenstein the Dwarf 
 
 Build the daemon with:
 
