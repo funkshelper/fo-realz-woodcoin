@@ -5,11 +5,11 @@
 Woodcoin a la "therealbitcoin".
 This is a fork of the reference node project found here: (therealbitcoin.org , thebitcoin.foundation).
 
-This is a retro version of Woodcoin.  Command line only.  
+This is a retro version of Woodcoin.  Command line only.  Recommended for experts only.
 It syncs far slower than more common wallet versions.
 
 This thing also builds statically with buildroot/musl toolchain as described 
-in therealbitcoin and related documentation.
+in therealbitcoin and related documentation.  Staticly linked executable is here with signature.
 
 This is a hardened war-ready full node and wallet for woodcoin, 
 for post-apocalypse and heavy battlefield use.
