@@ -3,6 +3,7 @@
 ...A funkenstein_the_dwarf production...
 
 Woodcoin a la "therealbitcoin".
+This is a fork of the reference node project found here: (therealbitcoin.org , thebitcoin.foundation).
 
 This is a retro version of Woodcoin.  Command line only.
 It syncs far slower than more common wallet versions.
@@ -14,7 +15,7 @@ This is a hardened war-ready full node and wallet for woodcoin,
 for post-apocalypse and heavy battlefield use.
 Also can be used as reference implementation due to minimal external libraries. 
 
-Obviously github is not expected to be around nor trusted in such scenarios 
+Obviously github is not expected to be entirely reliable in such scenarios 
 as those when this version becomes crucial to the network.
   
 Therefore it is suggested to keep a copy of this thing in local rad-hard storage, 
@@ -22,7 +23,7 @@ and to use the tarballed src directory (verify the signature).
 
 This release includes the following "therealbitcoin" patches:
 
-asciilifeform_add_verifyall_option.vpatch
+asciilifeform_add_verifyall_option.vpatch <br/>
 asciilifeform_and_now_we_have_block_dumper_corrected.vpatch
 asciilifeform_and_now_we_have_eatblock.vpatch
 asciilifeform_dnsseed_snipsnip.vpatch
